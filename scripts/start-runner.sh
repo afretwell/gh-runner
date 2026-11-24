@@ -105,6 +105,9 @@ on_signal() {
 }
 trap on_signal SIGTERM SIGINT
 
+# Job control on: without it, background children inherit SIGINT as ignored,
+# and run.sh stops the listener by forwarding SIGINT, so it would never exit.
+set -m
 ./run.sh &
 RUN_PID=$!
 set +e

@@ -23,5 +23,7 @@ workdir="${RUNNER_WORKDIR:-/home/runner/_work}"
 mkdir -p "$workdir"
 chown runner:runner "$workdir"
 
-# sudo -u re-reads /etc/group, so the new group membership takes effect.
-exec sudo --preserve-env -H -u runner /usr/local/bin/start-runner.sh
+# setpriv execs in place (no supervising parent to SIGKILL us during
+# deregistration) and --init-groups picks up the docker group added above.
+export HOME=/home/runner USER=runner
+exec setpriv --reuid=runner --regid=runner --init-groups /usr/local/bin/start-runner.sh
