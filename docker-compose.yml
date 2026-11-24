@@ -1,0 +1,17 @@
+services:
+  runner:
+    build:
+      context: .
+      args:
+        RUNNER_VERSION: ${RUNNER_VERSION:-2.338.2}
+        EXTRA_PACKAGES: ${EXTRA_PACKAGES:-}
+    image: gh-runner:${RUNNER_VERSION:-2.338.2}
+    env_file: .env
+    restart: unless-stopped
+    # Several identical runners; names stay unique via the container hostname.
+    deploy:
+      replicas: ${RUNNER_REPLICAS:-1}
+    # Lets jobs use Docker on the host. Remove if jobs must not reach the host daemon.
+    volumes:
+      - ${DOCKER_SOCK:-/var/run/docker.sock}:/var/run/docker.sock
+    stop_grace_period: 30s
