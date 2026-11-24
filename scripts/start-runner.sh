@@ -94,6 +94,7 @@ deregister() {
   fi
 }
 
+# shellcheck disable=SC2329  # invoked via trap
 on_signal() {
   log "Shutdown signal received"
   if [[ -n "${RUN_PID:-}" ]]; then
